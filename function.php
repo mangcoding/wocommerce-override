@@ -9,3 +9,24 @@ function my_price_html($price, $from, $to) {
 }
 
 
+//Use to override shipping base on weight
+
+add_filter('woocommerce_package_rates','overwrite_shipping_by_weight',100,2);
+
+function overwrite_shipping_by_weight($rates,$package) {
+    
+    global $woocommerce;
+
+    foreach ($rates as $rate) {
+        //Set the price
+        if ($woocommerce->cart->cart_contents_weight > 0 ){
+            $rate->cost = $rate->cost*ceil($woocommerce->cart->cart_contents_weight);
+        }else{
+            $rate->cost = $rate->cost;
+        }
+        
+    }
+    return $rates;
+}
+
+
